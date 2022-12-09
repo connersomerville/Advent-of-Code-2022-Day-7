@@ -28,3 +28,30 @@ export const getDirectorySize = (
 
   return size;
 };
+
+export const closestDirectorySize = (
+  dirs: Directory[],
+  directoryIndex: Map<string, Directory>,
+  targetSize: number
+) => {
+  let closest: Directory | undefined;
+  let closestDistance: number | undefined;
+
+  dirs.forEach((dir) => {
+    const distance = getDirectorySize(dir, directoryIndex) - targetSize;
+    const isBigEnough = distance >= 0;
+
+    if (isBigEnough && (!closestDistance || distance < closestDistance)) {
+      closest = dir;
+      closestDistance = distance;
+    }
+  });
+
+  if (closest == null) {
+    throw new Error("no suitable directories");
+  }
+  return {
+    dir: closest,
+    totalSize: getDirectorySize(closest, directoryIndex),
+  };
+};

@@ -1,4 +1,8 @@
-import { Directory, getDirectorySize } from "./directories.js";
+import {
+  closestDirectorySize,
+  Directory,
+  getDirectorySize,
+} from "./directories.js";
 import { getLineReader } from "./reader.js";
 
 const args = process.argv.slice(2);
@@ -7,6 +11,8 @@ const lineReader = getLineReader({
   filePath,
 });
 
+const FILESYSTEM_SIZE = 70000000;
+const UPDATE_REQUIRED_SPACE = 30000000;
 const directories = new Map<string, Directory>();
 let currentDir = "";
 
@@ -57,11 +63,24 @@ lineReader.on("line", (line) => {
 });
 
 lineReader.on("close", () => {
-  const MAX_SIZE = 100000;
-  const total = Array.from(directories.values())
-    .map((directory) => getDirectorySize(directory, directories))
-    .filter((size) => size <= MAX_SIZE)
-    .reduce((acc, size) => (acc += size), 0);
+  const root = directories.get("/");
+  if (!root) {
+    throw new Error("Failed to determine root directory");
+  }
+  const rootSize = getDirectorySize(root, directories);
+  const unusedSpace = FILESYSTEM_SIZE - rootSize;
+  const requiredSpace = UPDATE_REQUIRED_SPACE - unusedSpace;
+  console.log(`Total size of root directory is ${rootSize}`);
+  console.log(`Total unused space is ${unusedSpace}`);
+  console.log(`Total required space for update is ${requiredSpace}`);
 
-  console.log(`Total size of directories less than ${MAX_SIZE} is ${total}`);
+  const directoryToDelete = closestDirectorySize(
+    Array.from(directories.values()),
+    directories,
+    requiredSpace
+  );
+
+  console.log(
+    `To free up space, delete directory ${directoryToDelete.dir.name} with a total size of ${directoryToDelete.totalSize}`
+  );
 });
