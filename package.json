@@ -1,0 +1,27 @@
+{
+  "name": "advent-of-code-2022-day-7",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "yarn build && node dist/index.js",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/connersomerville/Advent-of-Code-2022-Day-7.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/connersomerville/Advent-of-Code-2022-Day-7/issues"
+  },
+  "homepage": "https://github.com/connersomerville/Advent-of-Code-2022-Day-7#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.10",
+    "typescript": "^4.9.3",
+    "vitest": "^0.25.3"
+  }
+}
